@@ -1,3 +1,4 @@
+import java.util.Scanner;
 
 public class PokemonGame {
     public static void main(String[] args) {
@@ -9,16 +10,44 @@ public class PokemonGame {
         int enemyPick = (int)(Math.random()*3);
         if (enemyPick == 0) {
             NoFly noFly = new NoFly();
-            Pikachu pikachu = new Pikachu(noFly);
+            Pikachu enemy = new Pikachu(noFly);
         } else if (enemyPick == 1) {
             NoFly noFly = new NoFly();
-            Squirtle squirtle = new Squirtle(noFly);
+            Squirtle enemy = new Squirtle(noFly);
         } else if (enemyPick == 2) {
             Wings wings = new Wings();
-            Charizard charizard = new Charizard(wings);
+            Charizard enemy = new Charizard(wings);
         } else {
             System.out.println("실행 안 됨");
              //여기는 영원히 실행 안 됩니다.
+        }
+
+        // 플레이어 포켓몬스터 선택
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("포켓몬을 고르세요.\n1) 피카츄 2) 꼬부기 3) 리자몽 : ");
+        int pokemonPick = scanner.nextInt();
+        if(pokemonPick == 1) {
+            Pikachu player = new Pikachu(new NoFly());
+        } else if(pokemonPick == 2) {
+            Squirtle player = new Squirtle(new NoFly());
+        } else if(pokemonPick == 3) {
+            Charizard player = new Charizard(new Wings());
+        } else {
+            System.out.println("정상적인 값이 아닙니다!");
+
+        }
+        int menu;
+        while(true){
+            System.out.print("\t1) 전투 2) 도망 3) 종료 : ");
+            menu = scanner.nextInt();
+            if(menu == 1){
+
+            } else if(menu == 2) {
+
+            } else {
+                System.out.println("게임을 종료합니다.");
+                break;
+            }
         }
     }
 }
