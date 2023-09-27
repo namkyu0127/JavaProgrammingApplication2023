@@ -6,6 +6,7 @@ public class Charizard extends Pokemon{
         this.level = 36;
 //      this.setLevel(36);
         this.attackRate = 84;
+        this.difenceRate = 78;
         this.setHp(78);
         this.name = "리자몽";
         this.flyable = f; //Association, has-a (Aggregation)
