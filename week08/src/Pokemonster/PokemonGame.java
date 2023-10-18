@@ -51,24 +51,31 @@ public class PokemonGame {
             }
 
             int menu, skillMenu;
-            while(true){
+            while(true) {
                 System.out.print("\t1) 전투   2) 도망   3) 종료 : ");
                 menu = scanner.nextInt();
-                if(menu == 1){
-                    //System.out.print("전투 기술 1) " + player.skills[0] + "   2) " +  player.skills[1] + "   3) " +  player.skills[2] + " : ");
-                    System.out.print("전투 기술 1) " + player.skills.get(0) + "   2) " +  player.skills.get(1) + "   3) " +  player.skills.get(2) + " : ");
-                    skillMenu = scanner.nextInt();
-                    //player.attack(enemy, scanner.next());
-                    //player.attack(enemy, player.skills[skillMenu-1]);
-                    player.attack(enemy, skillMenu);
-                    enemy.attack(player, (int)(Math.random() * 3) + 1);
-                }else if(menu == 2){
+                if (menu == 1) {
+                        //System.out.print("전투 기술 1) " + player.skills[0] + "   2) " +  player.skills[1] + "   3) " +  player.skills[2] + " : ");
+                        System.out.print("전투 기술 1) " + player.skills.get(0) + "   2) " + player.skills.get(1) + "   3) " + player.skills.get(2) + " : ");
+                        skillMenu = scanner.nextInt();
+                        //player.attack(enemy, scanner.next());
+                        //player.attack(enemy, player.skills[skillMenu-1]);
+                        player.attack(enemy, skillMenu);
+                        enemy.attack(player, (int) (Math.random() * 3) + 1);
+                        break;
 
-                }else{
+                    }else if (menu == 2) {
+
+                    }else if (menu == 3) {
                     System.out.println("게임을 종료합니다.");
                     break;
+                    } 
+                     else {
+                        System.out.println("메뉴에서 선택하세요.");
+                        
+                    }
                 }
-            }
+
         }catch(InputMismatchException err) {
             System.out.println("입력 값은 숫자입니다.");
             System.out.println("예외 내용 : " + err.getMessage());
