@@ -7,8 +7,8 @@ public interface Flyable {
 
     //pokemonster.Pokemon pokemon;
 
-    //void fly();
-    default void fly(){
-        System.out.println("날아 갑니다!");
-    }
+    void fly();
+//    default void fly(){ // 구현 코드가 있는 디폴트
+//        System.out.println("날아 갑니다!");
+//    }
 }
