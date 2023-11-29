@@ -16,6 +16,7 @@ public abstract class Pokemon {
 
 //    protected String[] skills;
 //    protected int[] specialAttackRate;
+
 //    protected List<String> skills;
 //    protected List<Integer> specialAttackRate;
     protected Map<Integer,String> skills;
@@ -105,6 +106,8 @@ public abstract class Pokemon {
         targetPokemon.hp = targetPokemon.hp - temporaryAttackRate;
         if(targetPokemon.hp <= 0){
             System.out.println(targetPokemon.name + "은(는) 사망!");
+            System.out.print("새로운 적 ");
+            PokemonGame.produceEnemy(); // 사망시 새로운 적 포켓몬 생
         }else{
             System.out.println(targetPokemon.name + "의 체력은 " + targetPokemon.hp + "입니다");
         }
