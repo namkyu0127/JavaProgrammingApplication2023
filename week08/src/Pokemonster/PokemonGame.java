@@ -25,10 +25,9 @@ public class PokemonGame {
         }else{
             System.out.println("여기는 영원히 실행 안됩니다");
         }
-
         // 플레이어 포켓몬스터 선택
         // Pokemonster.Pokemon player = new Pokemonster.Pokemon();  // 추상클래스의 객체는 생성 불가
-
+Charizard charizard = new Charizard(10, 10,"리자몽");
 
         try{
             Pokemon player = null;  // 추상클래스의 변수 선언은 가능 (upcasting 용)

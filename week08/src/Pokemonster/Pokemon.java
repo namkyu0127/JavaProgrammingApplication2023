@@ -75,7 +75,8 @@ public abstract class Pokemon {
         String texts = """
                     name의 레벨이
                     level으로 증가!
-                """.replace("level", this.level + "")  // pokemon 대신 this
+                     """
+                .replace("level", this.level + "")  // pokemon 대신 this
                 .replace("name", this.name);
         System.out.println(texts);
     }
