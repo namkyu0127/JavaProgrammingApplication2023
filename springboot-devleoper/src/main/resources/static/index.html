@@ -1,0 +1,409 @@
+<?php
+require '../vendor/autoload.php'; // Guzzle 라이브러리 로드
+
+use GuzzleHttp\Client;
+
+// Spotify API 관련 클래스
+class SpotifyAPI {
+    private $client;
+    private $clientId = '3bac575b115b4678b814c22daef538f9';  // Spotify 클라이언트 ID
+    private $clientSecret = '93a098cfc4374ab298501e9ac2e6c599';  // Spotify 클라이언트 시크릿
+    private $token;
+
+    public function __construct() {
+        $this->client = new Client();
+        $this->token = $this->getAccessToken();
+    }
+
+    // 액세스 토큰 가져오기
+    private function getAccessToken() {
+        $response = $this->client->request('POST', 'https://accounts.spotify.com/api/token', [
+            'form_params' => [
+                'grant_type' => 'client_credentials',
+            ],
+            'headers' => [
+                'Authorization' => 'Basic ' . base64_encode($this->clientId . ':' . $this->clientSecret),
+            ]
+        ]);
+
+        $data = json_decode($response->getBody(), true);
+        return $data['access_token'];
+    }
+
+    // 아티스트 정보 가져오기
+    public function getArtists($artistIds) {
+        $response = $this->client->request('GET', 'https://api.spotify.com/v1/artists', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->token,
+            ],
+            'query' => [
+                'ids' => implode(',', $artistIds),
+            ],
+        ]);
+
+        return json_decode($response->getBody(), true);
+    }
+
+    // 여러 앨범의 정보 가져오기
+    public function getAlbums($albumIds) {
+        $response = $this->client->request('GET', 'https://api.spotify.com/v1/albums', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->token,
+            ],
+            'query' => [
+                'ids' => implode(',', $albumIds),
+            ],
+        ]);
+
+        return json_decode($response->getBody(), true)['albums'];
+    }
+}
+// SpotifyAPI 객체 생성 및 아티스트와 플레이리스트 정보 가져오기
+$spotify = new SpotifyAPI();
+$artistIds = [
+    '6HvZYsbFfjnjFrWF950C9d',
+    '5TnQc2N1iKlFjYD7CPGvFc',
+    '6YVMFz59CuY7ngCxTxjpxE',
+    '4SpbR6yFEvexJuaBpgAU5p',
+    '3HqSLMAZ3g3d5poNaI7GOU',
+    '1uNFoZAHBGtllmzznpCI3s',
+    '6qqNVTkY8uBg9cP3Jd7DAH',
+    '0du5cEVh5yTK9QJze8zA0C',
+    '4XpUIb8uuNlIWVKmgKZXC0',
+    '66CXWjxzNUsdJxJ2JdwvnR',
+];
+$artists = $spotify->getArtists($artistIds);
+$albumIds = [
+    '15XcLhiVMlSOipUddTNDnr',
+    '5pSk3c3wVwnb2arb6ohCPU',
+    '5ITErfEiF1nEo8KTRgLv43',
+    '6uDZ4HPxwnOMpykpzpylDS',
+    '7KIwUrSiA0gc9WlI7AYIfZ',
+    '7ixOAT89NSsgUITYc5ByB5',
+    '538vEfAgLJ6g2I8ubuOlap',
+    '5yLDGn4Nj4fuqayUZqOp8J',
+    '7FkXm1xDdddS6ANM7wW4UR',
+    '3gHhPm8z8tid1kvpniUKuK',
+];
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css"> <!-- 스타일시트 -->
+    <title>home</title>
+    <script src="https://kit.fontawesome.com/fe1987264f.js" crossorigin="anonymous"></script>
+    <style>
+:root {
+    /* 색상 변수 정의 */
+    --text-color: #f0f4f5; /* 텍스트 색상 */
+    --background-color: #000000; /* 배경 색상 */
+    --accent-color: rgb(241, 0, 133); /* 강조 색상 */
+    --icons-color: rgb(118, 125, 128); /* 아이콘 색상 */
+    --bodybackground-color: rgb(0, 0, 0); /* 전체 바디 배경 색상 */
+    --border-color: #302e2e; /* 경계선 색상 */
+}
+
+body { 
+    margin: 0; /* 기본 여백 제거 */
+    background-color: var(--bodybackground-color); /* 바디 배경 색상 설정 */
+    font-family: 'STIX Two Math'; /* 기본 글꼴 설정 */
+    display: flex; /* 플렉스 박스 사용 */
+}
+
+/* 링크 스타일 */
+a {
+    text-decoration: none; /* 링크의 밑줄 제거 */
+    color: var(--text-color); /* 링크 색상 설정 */
+}
+
+/* 네비게이션 바 스타일 */
+.navbar {
+    display: flex; 
+    flex-direction: column; 
+    justify-content: flex-start; 
+    align-items: flex-start; 
+    background-color: var(--background-color); 
+    padding: 20px; 
+    width: 150px; 
+    height: 100vh; 
+    border-right: 1px solid var(--border-color); 
+    position: fixed; 
+    z-index: 1000; 
+}
+
+/* 네비게이션 바 로고 스타일 */
+.navbar__logo {
+    margin-bottom: 20px; 
+    width: 150px; 
+}
+
+.navbar__logo i {
+    color: var(--accent-color); /* 로고 아이콘 색상 설정 */
+}
+
+/* 네비게이션 바 아이콘 및 메뉴 스타일 */
+.navbar__icons,
+.navbar__menu {
+    list-style: none; 
+    display: flex; 
+    margin: 0; 
+    padding-left: 0; 
+}
+
+.navbar__icons {
+    color: var(--icons-color); 
+    background-color: var(--background-color); 
+}
+
+.navbar__icons li {
+    padding: 16px 0; 
+    font-size: 24px; 
+}
+
+.navbar__menu {
+    flex-direction: column; 
+    width: 100%; 
+    margin-bottom: 50px; 
+    position: relative; 
+}
+
+/* 메뉴 아래 경계선 스타일 */
+.navbar__menu::after {
+    content: ''; 
+    position: absolute; 
+    left: -20px; 
+    right: 0; 
+    bottom: -30px; 
+    height: 1px; 
+    background-color: var(--border-color); 
+}
+
+.navbar__menu li {
+    padding: 20px 0; 
+    white-space: nowrap; 
+}
+
+/* 메뉴 항목 호버 효과 */
+.navbar__menu li:hover {
+    background-color: var(--accent-color); 
+    border-radius: 3px; 
+}
+
+/* 콘텐츠 및 제목 스타일 */
+h1 {
+    color: var(--text-color); 
+    margin-left: 120px; 
+    font-size: 25px; 
+}
+
+.content {
+    margin-left: 100px; 
+    padding: 20px; 
+    z-index: 1; 
+}
+
+
+/* 트랙 카드 스타일 */
+.track-card {
+    background-color: #000000; 
+    border-radius: 8px; 
+    padding: 20px; 
+    flex: 1 1 100px; 
+    max-width: 200px; 
+    text-align: center; 
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); 
+    transition: transform 0.2s; 
+    position: relative; 
+    overflow-x: auto;
+    z-index: 2; 
+}
+
+.track-card:hover {
+    transform: scale(1.05); /* 카드 호버 시 확대 효과 */
+}
+
+.track-image {
+    width: 100%; 
+    border-radius: 5px; 
+    height: auto; 
+}
+
+.track-title {
+    font-size: 1em; 
+    margin: 5px 0; 
+    font-weight: bold;
+    color: #ffffff; 
+}
+
+.track-artist {
+    font-size: 0.8em;
+    color: #D3D3D3;
+}
+
+
+/* 트랙 차트 스타일 */
+.track-chart {
+    display: flex; 
+    flex-wrap: nowrap; 
+    justify-content: left; 
+    gap: 10px; 
+    position: relative; 
+    margin-left: 90px;
+}
+
+.artist-container {
+    display: flex; /* 플렉스 박스 사용 */
+    flex-wrap: nowrap; /* 줄바꿈 금지 */
+    overflow-x: auto; /* 수평 스크롤 활성화 */
+    margin-left: 90px;
+}
+
+
+/* 아티스트 블록 스타일 */
+.artist {
+    padding: 20px; 
+    margin-bottom: 20px; 
+    display: flex; 
+    align-items: center; 
+    gap: 10px;
+    flex-direction: column; /* 세로 방향으로 정렬 */
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* 아티스트 이미지 스타일 */
+.artist img {
+    border-radius: 100px; 
+    width: 200px; 
+    height: 200px; 
+    object-fit: cover; 
+    margin-bottom: 10px;
+}
+
+.artist:hover {
+    transform: scale(1.05); /* 카드 호버 시 확대 효과 */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+
+/* 아티스트 정보 스타일 */
+.artist-info {
+    display: flex; 
+    flex-direction: column; 
+}
+
+.artist-name {
+    font-size: 1.5em; 
+    font-weight: bold; 
+    text-align: center;
+}
+
+
+/* 미디어 쿼리: 작은 화면 스타일 */
+@media screen and (max-width: 700px) {
+    .navbar {
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: auto; 
+        flex-direction: row; 
+        justify-content: space-between; 
+        align-items: center; 
+        padding: 8px 20px; 
+    }
+
+    .navbar__menu {
+        position: fixed; 
+        width: 100%; 
+        height: auto; 
+        flex-direction: row; 
+        justify-content: space-around; 
+        align-items: center; 
+        border-top: 1px solid var(--border-color); 
+    }
+
+    .navbar__logo {
+        position: fixed; 
+        top: 25px; 
+        left: 20px; 
+    }
+
+    .navbar__icons {
+        position: fixed; 
+        top: 2px; 
+        right: 20px; 
+    }
+}
+
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="navbar__logo">
+        <i class="fa-solid fa-play"></i>
+        <a href="#">Mcue</a>
+    </div>
+
+    <ul class="navbar__menu">
+        <li><a href="#"><i class="fa-solid fa-house"></i> 홈</a></li>
+        <li><a href="#"><i class="fa-solid fa-chart-simple"></i> 차트</a></li>
+        <li><a href="#"><i class="fa-solid fa-magnifying-glass"></i> 검색</a></li>
+        <li><a href="#"><i class="fa-solid fa-user"></i> 보관함</a></li>
+    </ul>
+
+    <ul class="navbar__icons">
+        <li><i class="fa-solid fa-circle-user"></i></li>
+    </ul>
+</nav>
+
+<div class="content">
+    <h1 style="text-align:left;">인기 앨범</h1>
+
+    <div class="track-chart">
+        <?php
+        // Spotify API에서 앨범 정보 가져오기
+        $albums = $spotify->getAlbums($albumIds); // 여러 앨범 ID로 앨범 정보 가져오기
+        if ($albums) {
+            foreach ($albums as $album) {
+                $albumImage = $album['images'][0]['url']; // 앨범 이미지 URL
+                $albumName = $album['name']; // 앨범 이름
+                $albumArtist = $album['artists'][0]['name']; // 앨범 가수 (첫 번째 아티스트)
+                $spotifyLink = $album['external_urls']['spotify']; // Spotify 링크
+
+        
+                echo "<div class='track-card'>";
+                echo "<img src='" . htmlspecialchars($albumImage) . "' alt='Album Cover' class='track-image' onclick=\"window.open('$spotifyLink', '_blank')\" style='cursor: pointer;' />";
+                echo "<div class='track-title'>" . htmlspecialchars($albumName) . "</div>";
+                echo "<div class='track-artist'>" . htmlspecialchars($albumArtist) . "</div>";
+                echo "</div>"; // track-card
+            }
+        }
+        ?>
+    </div>
+
+    <h1>인기 아티스트</h1>
+    <div class="artist-container"> 
+    <?php
+    foreach ($artists['artists'] as $artist) {
+        $image = $artist['images'][0]['url'] ?? 'https://via.placeholder.com/100'; // 기본 이미지 제공
+        $name = $artist['name'];
+        $spotifyLink = $artist['external_urls']['spotify'];
+
+        echo "<div class='artist'>";
+        echo "<img src='" . htmlspecialchars($image) . "' alt='" . htmlspecialchars($name) . "' />";
+        echo "<div class='artist-info'>";
+        echo "<div class='artist-name'><a href='" . htmlspecialchars($spotifyLink) . "' target='_blank'>" . htmlspecialchars($name) . "</a></div>";
+        echo "</div>"; // artist-info
+        echo "</div>"; // artist
+    }
+    ?>
+    </div>
+</div>
+</body>
+</html>
